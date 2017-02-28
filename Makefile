@@ -1,5 +1,5 @@
 %.py: %.ui
-	pyside-uic $< > $@
+	pyside-uic $< -o $@
 
 chainsign.py: gui/mainwindow.py
 
