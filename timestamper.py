@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 import hashlib
 import sys
+import platform
 import os
 
 
@@ -88,8 +89,8 @@ def parse_bitcoin_conf(fd):
     conf = {}
     for l in fd:
         l = l.strip()
-        if not l.startswith('#'):
-            key, value = l.split('=')
+        if not l.startswith('#') and '=' in l:
+            key, value = l.split('=', 1)
             conf[key] = value
 
     return conf
@@ -97,16 +98,27 @@ def parse_bitcoin_conf(fd):
 def coin_config_path(coin):
     """Returns bitcoin.conf-like configuration path for provided coin"""
 
-    return os.path.expanduser('~/.{0}/{0}.conf'.format(coin))
+    paths = {
+        # FIXME use proper AppData path
+        'Windows': '~\AppData\Roaming\{0}\{0}.conf',
+        'Darwin': '~/Library/Application Support/{0}/{0}.conf',
 
-def rpcurl_from_config(coin, default=None):
+        # Fallback path (Linux, FreeBSD...)
+        None: '~/.{0}/{0}.conf',
+        }
+
+    path = paths.get(platform.system(), paths[None])
+
+    return os.path.expanduser(path.format(coin))
+
+def rpcurl_from_config(coin, default=None, config_path=None):
     """Returns RPC URL loaded from bitcoin.conf-like configuration of desired
     currency"""
 
-    config_filename = coin_config_path(coin)
+    config_path = config_path or coin_config_path(coin)
 
     try:
-        with open(config_filename) as fd:
+        with open(config_path) as fd:
             conf = parse_bitcoin_conf(fd)
             return 'http://{rpcuser}:{rpcpassword}@127.0.0.1:{rpcport}/' \
                 .format(**conf)
