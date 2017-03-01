@@ -1,2 +1,3 @@
 *.pyc
 gui/*.py
+*.swp

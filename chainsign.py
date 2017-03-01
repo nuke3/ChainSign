@@ -3,9 +3,12 @@ import sys
 import os
 import logging
 import time
+import operator
 
 from PySide import QtGui, QtCore
 from gui import mainwindow
+
+from timestamper import rpcurl_from_config, NamecoinTimestamper
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -15,19 +18,22 @@ class WorkerThread(QtCore.QThread):
     workFinished = QtCore.Signal([str])
     workFailed = QtCore.Signal([str])
 
-    def __init__(self, parent=None, data=[]):
+    def __init__(self, parent=None, list_model=None):
         super(WorkerThread, self).__init__(parent)
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.data = data
+        self.list_model = list_model
+
+        url = rpcurl_from_config('namecoin', 'http://127.0.0.1:8336/')
+        self.timestamper = NamecoinTimestamper(url)
 
     def run(self):
         try:
-            for n in self.data:
+            for n in self.list_model.files:
                 try:
-                    self.workUpdate.emit(str(n), self.process(n))
+                    self.workUpdate.emit(n[0], self.process(n))
                 except Exception as exc:
                     self.logger.exception('Process failed')
-                    self.workFailed.emit(str(exc))
+                    self.workUpdate.emit(n[0], 'error: %s' % (exc,))
 
             self.workFinished.emit('OK')
         except Exception as exc:
@@ -40,17 +46,23 @@ class WorkerThread(QtCore.QThread):
 
 
 class VerifyThread(WorkerThread):
-    def process(self, filename):
-        # TODO
-        time.sleep(1)
-        return 'OK'
+    def process(self, f):
+        with open(f[0], 'r') as fd:
+            resp = self.timestamper.verify_file(fd)
+            if resp and 'timestamp' in resp:
+                return 'Found at: %r' % (resp['timestamp'],)
+            else:
+                return 'Not found'
 
 
 class TimestampThread(WorkerThread):
-    def process(self, filename):
-        # TODO
-        time.sleep(1)
-        return 'OK'
+    def process(self, f):
+        with open(f[0], 'r') as fd:
+            resp = self.timestamper.publish_file(fd)
+            if resp:
+                return 'Timestamped, transaction ID: %s' % (resp,)
+            else:
+                return 'Not found'
 
 
 def walk(directory):
@@ -61,6 +73,52 @@ def walk(directory):
             yield os.path.join(dirpath, f)
 
 
+class FileListModel(QtCore.QAbstractTableModel):
+    headers = ['File', 'Status']
+
+    def __init__(self, parent=None):
+        super(FileListModel, self).__init__(parent)
+        self.files = []
+
+    def rowCount(self, parent):
+        return len(self.files)
+
+    def columnCount(self, parent):
+        return len(self.headers)
+
+    def data(self, index, role):
+        if not index.isValid():
+            return None
+        elif role != QtCore.Qt.DisplayRole:
+            return None
+        return self.files[index.row()][index.column()]
+
+    def headerData(self, col, orientation, role):
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.headers[col]
+        return None
+
+    def sort(self, col, order):
+        self.layoutAboutToBeChanged.emit()
+        self.files = sorted(self.files, key=operator.itemgetter(col))
+        if order == Qt.DescendingOrder:
+            self.files.reverse()
+        self.layoutChanged.emit()
+
+    def add_file(self, fname):
+        self.layoutAboutToBeChanged.emit()
+        self.files.append([fname, 'pending'])
+        self.layoutChanged.emit()
+
+    def update_file(self, fname, status):
+        self.layoutAboutToBeChanged.emit()
+        for f in self.files:
+            # FIXME
+            if f[0] == fname:
+                f[1] = status
+        self.layoutChanged.emit()
+
+
 class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
     worker = None
 
@@ -68,6 +126,9 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.app = app
+
+        self.list_model = FileListModel(self)
+        self.fileList.setModel(self.list_model)
 
     @QtCore.Slot()
     def on_addDirectoryButton_clicked(self):
@@ -86,8 +147,10 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
 
         for f in files_iter:
             # TODO
+            self.list_model.add_file(f)
             files_added += 1
 
+        self.fileList.resizeColumnsToContents()
         self.statusBar().showMessage("%d files added." % (files_added,))
 
     @property
@@ -102,6 +165,8 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
 
     def on_worker_update(self, fname, status):
         self.statusBar().showMessage("%s: %s" % (fname, status))
+        self.list_model.update_file(fname, status)
+        self.fileList.resizeColumnsToContents()
 
     #
     # Button slots
@@ -112,13 +177,11 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
             self.statusBar().showMessage('Work in progress...')
             return
 
-        self.worker = VerifyThread(self, range(10))
+        self.worker = VerifyThread(self, self.list_model)
         self.worker.workUpdate.connect(self.on_worker_update)
         self.worker.workFailed.connect(self.on_worker_failed)
         self.worker.workFinished.connect(self.on_worker_finished)
         self.worker.start()
-
-        print('verify')
 
     @QtCore.Slot()
     def on_timestampButton_clicked(self):
@@ -126,13 +189,11 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
             self.statusBar().showMessage('Work in progress...')
             return
 
-        self.worker = TimestampThread(self, range(10))
+        self.worker = TimestampThread(self, self.list_model)
         self.worker.workUpdate.connect(self.on_worker_update)
         self.worker.workFailed.connect(self.on_worker_failed)
         self.worker.workFinished.connect(self.on_worker_finished)
         self.worker.start()
-
-        print('publish')
 
     #
     # Main menu slots
