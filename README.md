@@ -25,9 +25,12 @@ above)
 Example bulk verification CLI is available in `timestamper.py` when run
 directly (`python timestamper.py FILE1 FILE2 ...`)
 
+Do not forget to run namecoin NODE!
+
 Development
 -----------
 Currently GUI part is based on PySide (qt4). In (hopefuly near) future, when
 PySide2 becomes a (stable) thing, we'll just migrate it over.
 
 We try to target python3.
+
