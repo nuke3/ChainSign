@@ -1,3 +1,5 @@
 *.pyc
 gui/*.py
 *.swp
+build/
+buildreqs/
