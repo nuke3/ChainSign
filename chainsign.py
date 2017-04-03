@@ -143,6 +143,12 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
         self.list_model = FileListModel(self)
         self.fileList.setModel(self.list_model)
 
+        if not rpcurl_from_config('namecoin'):
+            QtGui.QMessageBox.critical(self,
+                    'No namecoind found',
+                    'Please install and configure Namecoin-Qt first.')
+            sys.exit(1)
+
     @QtCore.Slot()
     def on_addDirectoryButton_clicked(self):
         directory = QtGui.QFileDialog.getExistingDirectory(self)
