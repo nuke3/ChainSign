@@ -133,8 +133,8 @@ def rpcurl_from_config(coin, default=None, config_path=None):
             else:
                 return default
 
-            return 'http://{0}@127.0.0.1:{rpcport}/' \
-                .format(credentials, **conf)
+            return 'http://{0}@127.0.0.1:{1}/' \
+                .format(credentials, conf.get('rpcport', 8336))
     except:
         return default
 
