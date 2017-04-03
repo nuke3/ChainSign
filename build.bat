@@ -13,6 +13,18 @@ echo - install requirements
 echo - distutils cx_freeze build
 %python_exe% setup.py build || goto :error
 
+echo - cleanup
+rd /S /Q build\exe.win32-2.7\PySide\examples
+rd /S /Q build\exe.win32-2.7\PySide\translations
+rd /S /Q build\exe.win32-2.7\PySide\docs
+rd /S /Q build\exe.win32-2.7\PySide\scripts
+rd /S /Q build\exe.win32-2.7\PySide\typesystems
+del /Q build\exe.win32-2.7\PySide\*.exe
+del /Q build\exe.win32-2.7\PySide\QtWebKit*
+del /Q build\exe.win32-2.7\PySide\QtDesigner*
+del /Q build\exe.win32-2.7\PySide\QtXmlPatterns*
+del /Q build\exe.win32-2.7\PySide\Qt3Support4*
+
 echo - Inno Setup build
 %iscc_exe% "installer.iss" || goto :error
 
