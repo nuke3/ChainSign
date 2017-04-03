@@ -18,8 +18,8 @@ def qt_excepthook(type, value, tb):
     sys.__excepthook__(type, value, tb)
 
     msgbox = QtGui.QMessageBox()
-    msgbox.setText("Unexpected error occured")
-    msgbox.setInformativeText(str(value))
+    msgbox.setInformativeText("Unexpected error occured")
+    msgbox.setText(str(value))
     msgbox.setDetailedText('\n'.join(traceback.format_exception(type, value, tb)))
     msgbox.setIcon(QtGui.QMessageBox.Critical)
     msgbox.exec_()
