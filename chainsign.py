@@ -4,6 +4,7 @@ import os
 import logging
 import time
 import operator
+import traceback
 
 from PySide import QtGui, QtCore
 from gui import mainwindow
@@ -12,6 +13,18 @@ from timestamper import rpcurl_from_config, NamecoinTimestamper
 
 logging.basicConfig(level=logging.DEBUG)
 
+
+def qt_excepthook(type, value, tb):
+    msgbox = QtGui.QMessageBox()
+    msgbox.setText("Unexpected error occured")
+    msgbox.setInformativeText(str(value))
+    msgbox.setDetailedText('\n'.join(traceback.format_exception(type, value, tb)))
+    msgbox.setIcon(QtGui.QMessageBox.Critical)
+    msgbox.exec_()
+
+    sys.__excepthook__(type, value, tb)
+
+sys.excepthook = qt_excepthook
 
 class WorkerThread(QtCore.QThread):
     workUpdate = QtCore.Signal([str, str])
