@@ -116,15 +116,26 @@ def rpcurl_from_config(coin, default=None, config_path=None):
     currency"""
 
     config_path = config_path or coin_config_path(coin)
+    cookie_path = os.path.join(os.path.dirname(config_path), '.cookie')
+
+    credentials = ''
 
     try:
         with open(config_path) as fd:
             conf = parse_bitcoin_conf(fd)
-            return 'http://{rpcuser}:{rpcpassword}@127.0.0.1:{rpcport}/' \
-                .format(**conf)
+            if 'rpcpassword' in conf:
+                # Password authentication
+                credentials = '{rpcuser}:{rpcpassword}'.format(**conf)
+            elif os.path.exists(cookie_path):
+                # Cookie authentication
+                with open(cookie_path) as cfd:
+                    credentials = cfd.read().decode('utf-8').strip()
+            else:
+                return default
+
+            return 'http://{0}@127.0.0.1:{rpcport}/' \
+                .format(credentials, **conf)
     except:
-        raise
-        # TODO better error handling
         return default
 
 def main():
