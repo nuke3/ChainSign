@@ -15,6 +15,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 def qt_excepthook(type, value, tb):
+    sys.__excepthook__(type, value, tb)
+
     msgbox = QtGui.QMessageBox()
     msgbox.setText("Unexpected error occured")
     msgbox.setInformativeText(str(value))
@@ -22,7 +24,6 @@ def qt_excepthook(type, value, tb):
     msgbox.setIcon(QtGui.QMessageBox.Critical)
     msgbox.exec_()
 
-    sys.__excepthook__(type, value, tb)
 
 sys.excepthook = qt_excepthook
 
