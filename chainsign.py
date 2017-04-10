@@ -2,14 +2,15 @@
 import sys
 import os
 import logging
-import time
-import operator
 import traceback
 
 from PySide import QtGui, QtCore
 from gui import mainwindow
 
-from timestamper import rpcurl_from_config, NamecoinTimestamper
+from timestamper import rpcurl_from_config
+from workers import VerifyThread, TimestampThread
+from models import FileListModel
+
 
 # Disable logging on Windows as it seems to lockup QThreads...?!
 if os.name != 'nt':
@@ -29,111 +30,12 @@ def qt_excepthook(type, value, tb):
 
 sys.excepthook = qt_excepthook
 
-class WorkerThread(QtCore.QThread):
-    workUpdate = QtCore.Signal([str, str])
-    workFinished = QtCore.Signal([str])
-    workFailed = QtCore.Signal([str])
-
-    def __init__(self, parent=None, list_model=None):
-        super(WorkerThread, self).__init__(parent)
-        self.logger = logging.getLogger(self.__class__.__name__)
-        self.files = list_model.files
-
-        url = rpcurl_from_config('namecoin', 'http://127.0.0.1:8336/')
-        self.timestamper = NamecoinTimestamper(url)
-
-    def run(self):
-        try:
-            for n in self.files:
-                try:
-                    self.workUpdate.emit(n[0], self.process(n))
-                except Exception as exc:
-                    self.logger.exception('Process failed')
-                    self.workUpdate.emit(n[0], 'error: %s' % (exc,))
-
-            self.workFinished.emit('OK')
-        except Exception as exc:
-            self.logger.exception('Run failed')
-            self.workFailed.emit(str(exc))
-
-    def process(self):
-        time.sleep(1)
-        return 'OK'
-
-
-class VerifyThread(WorkerThread):
-    def process(self, f):
-        with open(f[0], 'r') as fd:
-            resp = self.timestamper.verify_file(fd)
-            if resp and 'timestamp' in resp:
-                return 'Found at: %r' % (resp['timestamp'],)
-            else:
-                return 'Not found'
-
-
-class TimestampThread(WorkerThread):
-    def process(self, f):
-        with open(f[0], 'r') as fd:
-            resp = self.timestamper.publish_file(fd)
-            if resp:
-                return 'Timestamped, transaction ID: %s' % (resp,)
-            else:
-                return 'Not found'
-
-
 def walk(directory):
     """Generator yielding provided directory files recursively"""
 
     for dirpath, dirnames, filenames in os.walk(directory):
         for f in filenames:
             yield os.path.join(dirpath, f)
-
-
-class FileListModel(QtCore.QAbstractTableModel):
-    headers = ['File', 'Status']
-
-    def __init__(self, parent=None):
-        super(FileListModel, self).__init__(parent)
-        self.files = []
-
-    def rowCount(self, parent):
-        return len(self.files)
-
-    def columnCount(self, parent):
-        return len(self.headers)
-
-    def data(self, index, role):
-        if not index.isValid():
-            return None
-        elif role != QtCore.Qt.DisplayRole:
-            return None
-        return self.files[index.row()][index.column()]
-
-    def headerData(self, col, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-            return self.headers[col]
-        return None
-
-    def sort(self, col, order):
-        self.layoutAboutToBeChanged.emit()
-        self.files = sorted(self.files, key=operator.itemgetter(col))
-        if order == Qt.DescendingOrder:
-            self.files.reverse()
-        self.layoutChanged.emit()
-
-    def add_file(self, fname):
-        self.layoutAboutToBeChanged.emit()
-        self.files.append([fname, 'pending'])
-        self.layoutChanged.emit()
-
-    def update_file(self, fname, status):
-        self.layoutAboutToBeChanged.emit()
-        for f in self.files:
-            # FIXME
-            if f[0] == fname:
-                f[1] = status
-        self.layoutChanged.emit()
-
 
 class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
     worker = None
