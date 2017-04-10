@@ -78,7 +78,7 @@ class NamecoinTimestamper(Timestamper):
         name = self.IDENTITY.format(digest)
         reg_txid, nonce = self.client.name_new(name)
 
-        txid = self.client.name_firstupdate(name, nonce, json.dumps({
+        txid = self.client.name_firstupdate(name, nonce, reg_txid, json.dumps({
             'ver': 0,
             }))
 
