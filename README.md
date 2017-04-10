@@ -17,6 +17,11 @@ windows installer and such...
     pip install -r requirements.txt
     make run
 
+For Windows
+https://github.com/nuke3/ChainSign/releases
+
+iOS: soon
+
 Usage
 -----
 Simple Qt UI is present in `chainsign.py` (that is run by `make run` command
