@@ -38,7 +38,7 @@ Name: "setupnamecoind"; Description: "Configure Namecoin Core to allow RPC"
 Source: "build\namecoin-0.13.99-win32-setup-unsigned.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "build\exe.win32-2.7\chainsign.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "build\exe.win32-2.7\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "namecoin.conf"; DestDir: "{userappdata}\Namecoin"; Tasks: setupnamecoind Flags: uninsneveruninstall onlyifdoesntexist
+Source: "namecoin.conf"; DestDir: "{userappdata}\Namecoin"; Tasks: setupnamecoind; Flags: uninsneveruninstall onlyifdoesntexist
 
 [Icons]
 Name: "{group}\ChainSign"; Filename: "{app}\chainsign.EXE"; WorkingDir: "{app}"

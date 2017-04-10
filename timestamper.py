@@ -129,7 +129,8 @@ def rpcurl_from_config(coin, default=None, config_path=None):
             elif os.path.exists(cookie_path):
                 # Cookie authentication
                 with open(cookie_path) as cfd:
-                    credentials = cfd.read().decode('utf-8').strip()
+                    credentials = cfd.read().decode('utf-8').strip() \
+                        .replace('/', '%2F')
             else:
                 return default
 
