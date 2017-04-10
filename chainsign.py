@@ -11,7 +11,9 @@ from gui import mainwindow
 
 from timestamper import rpcurl_from_config, NamecoinTimestamper
 
-logging.basicConfig(level=logging.DEBUG)
+# Disable logging on Windows as it seems to lockup QThreads...?!
+if os.name != 'nt':
+    logging.basicConfig(level=logging.DEBUG)
 
 
 def qt_excepthook(type, value, tb):
@@ -35,14 +37,14 @@ class WorkerThread(QtCore.QThread):
     def __init__(self, parent=None, list_model=None):
         super(WorkerThread, self).__init__(parent)
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.list_model = list_model
+        self.files = list_model.files
 
         url = rpcurl_from_config('namecoin', 'http://127.0.0.1:8336/')
         self.timestamper = NamecoinTimestamper(url)
 
     def run(self):
         try:
-            for n in self.list_model.files:
+            for n in self.files:
                 try:
                     self.workUpdate.emit(n[0], self.process(n))
                 except Exception as exc:
