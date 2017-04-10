@@ -20,6 +20,7 @@ DisableProgramGroupPage=yes
 OutputDir=build
 OutputBaseFilename=ChainSign_setup
 SetupIconFile=icon.ico
+UninstallDisplayIcon={app}\chainsign.exe
 Compression=lzma
 SolidCompression=yes
 
@@ -29,16 +30,19 @@ Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "installnamecoind"; Description: "Install Namecoin Core"
+Name: "setupnamecoind"; Description: "Configure Namecoin Core to allow RPC"
 
 [Files]
+Source: "build\namecoin-0.13.99-win32-setup-unsigned.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "build\exe.win32-2.7\chainsign.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "build\exe.win32-2.7\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "namecoin.conf"; DestDir: "{userappdata}\Namecoin"; Tasks: setupnamecoind
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+Filename: "{app}\namecoin-0.13.99-win32-setup-unsigned.exe"; Tasks: installnamecoind
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
