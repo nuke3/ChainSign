@@ -5,6 +5,7 @@
 #define MyAppVersion "0.1"
 #define MyAppPublisher "ChainSign"
 #define MyAppExeName "chainsign.exe"
+#define NamecoinExeName "Namecoin_v0.3.80_setup.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -35,9 +36,9 @@ Name: "installnamecoind"; Description: "Install Namecoin Core"
 Name: "setupnamecoind"; Description: "Configure Namecoin Core to allow RPC"
 
 [Files]
-Source: "build\namecoin-0.13.99-win32-setup-unsigned.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "build\exe.win32-2.7\chainsign.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "build\exe.win32-2.7\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "build\{#NamecoinExeName}"; DestDir: "{app}"; Tasks: installnamecoind; Flags: ignoreversion
 Source: "namecoin.conf"; DestDir: "{userappdata}\Namecoin"; Tasks: setupnamecoind; Flags: uninsneveruninstall onlyifdoesntexist
 
 [Icons]
@@ -46,5 +47,5 @@ Name: "{group}\Uninstall ChainSign"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\namecoin-0.13.99-win32-setup-unsigned.exe"; Tasks: installnamecoind
+Filename: "{app}\{#NamecoinExeName}"; Tasks: installnamecoind
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
