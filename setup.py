@@ -6,7 +6,7 @@ def get_rev():
     return open('.git/' + (open('.git/HEAD').read().strip().split(': ')[1])).read()[:7]
 
 build_exe_options = {
-    "include_files": ["icon.ico"],
+    "include_files": ["icon.ico", "icon.png"],
     "packages": ["PySide", "bitcoinrpc"],
     "optimize": 2,
     }
