@@ -32,8 +32,8 @@ Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "installnamecoind"; Description: "Install Namecoin Core"
-Name: "setupnamecoind"; Description: "Configure Namecoin Core to allow RPC"
+Name: "installnamecoind"; Description: "Install Namecoin client"
+Name: "setupnamecoind"; Description: "Configure Namecoin client to allow RPC"
 
 [Files]
 Source: "build\exe.win32-2.7\chainsign.exe"; DestDir: "{app}"; Flags: ignoreversion
