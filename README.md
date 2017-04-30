@@ -20,7 +20,7 @@ windows installer and such...
 For Windows
 https://github.com/nuke3/ChainSign/releases
 
-iOS: installer soon, but you can install it in linux way 
+iOS and MacOS: installer soon, but you can install it in linux way 
 
 Usage
 -----
