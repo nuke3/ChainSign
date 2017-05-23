@@ -5,6 +5,10 @@ import logging
 import traceback
 
 from PySide import QtGui, QtCore
+
+# This is needed for SVG assets to be loaded on Windows builds!
+from PySide import QtSvg, QtXml  # noqa
+
 from gui import mainwindow
 
 from timestamper import rpcurl_from_config

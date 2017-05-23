@@ -22,7 +22,6 @@ rd /S /Q build\exe.win32-2.7\PySide\typesystems
 del /Q build\exe.win32-2.7\PySide\*.exe
 del /Q build\exe.win32-2.7\PySide\QtWebKit*
 del /Q build\exe.win32-2.7\PySide\QtDesigner*
-del /Q build\exe.win32-2.7\PySide\QtXmlPatterns*
 del /Q build\exe.win32-2.7\PySide\Qt3Support4*
 
 echo - Inno Setup build

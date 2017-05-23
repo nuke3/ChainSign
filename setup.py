@@ -6,7 +6,7 @@ def get_rev():
     return open('.git/' + (open('.git/HEAD').read().strip().split(': ')[1])).read()[:7]
 
 build_exe_options = {
-    "include_files": ["icon.ico", "icon.png"],
+    "include_files": ["assets/icon.ico", "assets/icon.png"],
     "packages": ["PySide", "bitcoinrpc"],
     "optimize": 2,
     }
@@ -23,8 +23,8 @@ setup(name="ChainSign",
       version="0.1",
       description="ChainSign blockchain signing and timestamping app",
       executables=[
-          Executable("chainsign.py", base=base, icon="icon.ico"),
+          Executable("chainsign.py", base=base, icon="assets/icon.ico"),
           Executable("chainsign.py", base=None,
-              targetName="chainsign_debug.exe", icon="icon.ico"),
+              targetName="chainsign_debug.exe", icon="assets/icon.ico"),
           ],
       options={"build_exe": build_exe_options})

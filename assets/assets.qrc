@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>verify.svg</file>
+        <file>directory.svg</file>
+        <file>file.svg</file>
+        <file>timestamp.svg</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>banner.svg</file>
+        <file>icon.png</file>
+    </qresource>
+</RCC>
