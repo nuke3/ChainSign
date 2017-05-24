@@ -1,4 +1,4 @@
-UI_OBJS = gui/mainwindow.py
+UI_OBJS = gui/mainwindow.py gui/about.py
 RCC_FILES = assets/assets.py
 
 %.py: %.ui

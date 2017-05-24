@@ -3,3 +3,4 @@ gui/*.py
 *.swp
 build/
 buildreqs/
+dist/

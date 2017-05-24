@@ -3,23 +3,22 @@ import sys
 import os
 import logging
 import traceback
+import json
 
 from PySide import QtGui, QtCore
 
 # This is needed for SVG assets to be loaded on Windows builds!
 from PySide import QtSvg, QtXml  # noqa
 
-from gui import mainwindow
+from gui import mainwindow, about
 
 from timestamper import rpcurl_from_config
 from workers import VerifyThread, TimestampThread
 from models import FileListModel
+from updater import UpdateCheckerThread
 
 
-# Disable logging on Windows as it seems to lockup QThreads...?!
-if os.name != 'nt':
-    logging.basicConfig(level=logging.DEBUG)
-
+logging.basicConfig(level=logging.DEBUG)
 
 def qt_excepthook(type, value, tb):
     sys.__excepthook__(type, value, tb)
@@ -40,6 +39,34 @@ def walk(directory):
     for dirpath, dirnames, filenames in os.walk(directory):
         for f in filenames:
             yield os.path.join(dirpath, f)
+
+class AboutDialog(QtGui.QDialog, about.Ui_AboutDialog):
+    def __init__(self, parent=None):
+        super(AboutDialog, self).__init__(parent)
+        self.setupUi(self)
+        th = UpdateCheckerThread(self)
+        th.response.connect(self.on_updater_response)
+        th.start()
+
+    def on_updater_response(self, resp):
+        data = json.loads(resp)
+
+        if data is None:
+            self.updaterLabel.setText("Non-public development release")
+        elif data.get('error'):
+            self.updaterLabel.setText(
+                '<i>An error occured during update check:</i><br />'
+                '%s' % data.get('error'))
+        elif data.get('binary_url'):
+            latest = data.get('latest')
+            self.updaterLabel.setText(
+                'New update available: <b>%s</b> <i>(%s)</i><br />'
+                '<a href="%s">Download update</a> &bull; '
+                '<a href="%s">Release info</a>' % (
+                    latest.get('tag_name'), latest.get('name'),
+                    data.get('binary_url'), latest.get('html_url')))
+        else:
+            self.updaterLabel.setText("No update available")
 
 class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
     worker = None
@@ -131,6 +158,9 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
         """This handles activation of "Exit" menu action"""
         self.app.exit()
 
+    @QtCore.Slot()
+    def on_actionAbout_triggered(self):
+        AboutDialog(self).exec_()
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

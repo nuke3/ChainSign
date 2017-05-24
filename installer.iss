@@ -18,7 +18,7 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
-OutputDir=build
+OutputDir=dist
 OutputBaseFilename=ChainSign_setup
 SetupIconFile=assets/icon.ico
 UninstallDisplayIcon={app}\chainsign.exe
@@ -36,9 +36,9 @@ Name: "installnamecoind"; Description: "Install Namecoin client"
 Name: "setupnamecoind"; Description: "Configure Namecoin client to allow RPC"
 
 [Files]
-Source: "build\exe.win32-2.7\chainsign.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build\exe.win32-2.7\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "build\{#NamecoinExeName}"; DestDir: "{app}"; Tasks: installnamecoind; Flags: ignoreversion
+Source: "dist\chainsign\chainsign.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\chainsign\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\{#NamecoinExeName}"; DestDir: "{app}"; Tasks: installnamecoind; Flags: ignoreversion
 Source: "namecoin.conf"; DestDir: "{userappdata}\Namecoin"; Tasks: setupnamecoind; Flags: uninsneveruninstall onlyifdoesntexist
 
 [Icons]
