@@ -4,3 +4,4 @@ gui/*.py
 build/
 buildreqs/
 dist/
+assets/*.py
