@@ -1,10 +1,9 @@
 import requests
 import json
-import logging
 import os
 import sys
 
-from PySide import QtCore
+from PySide2 import QtCore
 
 def get_git_rev():
     return open('.git/' + (open('.git/HEAD').read().strip().split(': ')[1])).read()[:7]

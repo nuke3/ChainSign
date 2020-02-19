@@ -1,6 +1,6 @@
 import logging
 import time
-from PySide import QtCore
+from PySide2 import QtCore
 from timestamper import rpcurl_from_config, NamecoinTimestamper
 
 
@@ -38,7 +38,7 @@ class WorkerThread(QtCore.QThread):
 
 class VerifyThread(WorkerThread):
     def process(self, f):
-        with open(f[0], 'r') as fd:
+        with open(f[0], 'rb') as fd:
             resp = self.timestamper.verify_file(fd)
             if resp and 'timestamp' in resp:
                 return 'Found at: %r' % (resp['timestamp'],)
@@ -48,7 +48,7 @@ class VerifyThread(WorkerThread):
 
 class TimestampThread(WorkerThread):
     def process(self, f):
-        with open(f[0], 'r') as fd:
+        with open(f[0], 'rb') as fd:
             resp = self.timestamper.publish_file(fd)
             if resp:
                 return 'Timestamped, transaction ID: %s' % (resp,)

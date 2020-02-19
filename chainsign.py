@@ -5,10 +5,10 @@ import logging
 import traceback
 import json
 
-from PySide import QtGui, QtCore
+from PySide2 import QtCore, QtWidgets
 
 # This is needed for SVG assets to be loaded on Windows builds!
-from PySide import QtSvg, QtXml  # noqa
+from PySide2 import QtSvg, QtXml  # noqa
 
 from gui import mainwindow, about
 
@@ -23,11 +23,11 @@ logging.basicConfig(level=logging.DEBUG)
 def qt_excepthook(type, value, tb):
     sys.__excepthook__(type, value, tb)
 
-    msgbox = QtGui.QMessageBox()
+    msgbox = QtWidgets.QMessageBox()
     msgbox.setInformativeText("Unexpected error occured")
     msgbox.setText(str(value))
     msgbox.setDetailedText('\n'.join(traceback.format_exception(type, value, tb)))
-    msgbox.setIcon(QtGui.QMessageBox.Critical)
+    msgbox.setIcon(QtWidgets.QMessageBox.Critical)
     msgbox.exec_()
 
 
@@ -40,7 +40,7 @@ def walk(directory):
         for f in filenames:
             yield os.path.join(dirpath, f)
 
-class AboutDialog(QtGui.QDialog, about.Ui_AboutDialog):
+class AboutDialog(QtWidgets.QDialog, about.Ui_AboutDialog):
     def __init__(self, parent=None):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
@@ -68,7 +68,7 @@ class AboutDialog(QtGui.QDialog, about.Ui_AboutDialog):
         else:
             self.updaterLabel.setText("No update available")
 
-class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
     worker = None
 
     def __init__(self, parent=None, app=None):
@@ -80,19 +80,19 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
         self.fileList.setModel(self.list_model)
 
         if not rpcurl_from_config('namecoin'):
-            QtGui.QMessageBox.critical(self,
+            QtWidgets.QMessageBox.critical(self,
                     'No namecoind found',
                     'Please install and configure Namecoin-Qt first.')
             sys.exit(1)
 
     @QtCore.Slot()
     def on_addDirectoryButton_clicked(self):
-        directory = QtGui.QFileDialog.getExistingDirectory(self)
+        directory = QtWidgets.QFileDialog.getExistingDirectory(self)
         self.add_files(walk(directory))
 
     @QtCore.Slot()
     def on_addFilesButton_clicked(self):
-        files, choice = QtGui.QFileDialog.getOpenFileNames(self)
+        files, choice = QtWidgets.QFileDialog.getOpenFileNames(self)
         self.add_files(files)
 
     def add_files(self, files_iter):
@@ -163,7 +163,7 @@ class MainWindow(QtGui.QMainWindow, mainwindow.Ui_MainWindow):
         AboutDialog(self).exec_()
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(app=app)
     window.show()
     sys.exit(app.exec_())

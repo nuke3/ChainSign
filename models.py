@@ -1,4 +1,4 @@
-from PySide import QtCore
+from PySide2 import QtCore
 import operator
 
 
@@ -30,7 +30,7 @@ class FileListModel(QtCore.QAbstractTableModel):
     def sort(self, col, order):
         self.layoutAboutToBeChanged.emit()
         self.files = sorted(self.files, key=operator.itemgetter(col))
-        if order == Qt.DescendingOrder:
+        if order == QtCore.Qt.DescendingOrder:
             self.files.reverse()
         self.layoutChanged.emit()
 
