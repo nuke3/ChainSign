@@ -12,7 +12,7 @@ from PySide2 import QtSvg, QtXml  # noqa
 
 from gui import mainwindow, about
 
-from timestamper import rpcurl_from_config
+from utils import rpcurl_from_config
 from workers import VerifyThread, TimestampThread
 from models import FileListModel
 from updater import UpdateCheckerThread

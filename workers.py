@@ -1,7 +1,8 @@
 import logging
 import time
 from PySide2 import QtCore
-from timestamper import rpcurl_from_config, NamecoinTimestamper
+from timestamper import NamecoinTimestamper
+from utils import rpcurl_from_config
 
 
 class WorkerThread(QtCore.QThread):
