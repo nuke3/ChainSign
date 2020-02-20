@@ -174,8 +174,12 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         AboutDialog(self).exec_()
 
 
-if __name__ == "__main__":
+def main():
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow(app=app)
     window.show()
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
