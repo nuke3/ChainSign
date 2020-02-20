@@ -59,22 +59,31 @@ class NamecoinTimestamper(Timestamper):
     def verify(self, digest):
         """Namecoin poe/ verification implementation"""
 
+        name = self.IDENTITY.format(digest)
         try:
-            hist = self.client.name_history(self.IDENTITY.format(digest))
+            hist = self.client.name_history(name)
+            txid = hist[0]['txid']
+            pending = False
         except JSONRPCException as exc:
-            # FIXME maybe?
-            if str(exc).split(': ')[0] == '-4':
-                return None
-
-            raise
-
-        txid = hist[0]['txid']
+            if exc.code == -4:
+                hist_pending = self.client.name_pending(name)
+                if not hist_pending:
+                    return
+                txid = hist_pending[0]['txid']
+                pending = True
+            else:
+                # FIXME maybe?
+                if str(exc).split(': ')[0] == '-4':
+                    return None
+                raise
+        if not txid:
+            return
         tx = self.client.gettransaction(txid)
-
         return {
             'txid': txid,
             'timestamp': datetime.utcfromtimestamp(tx['time']),
-            }
+            'pending': pending
+        }
 
     def register(self, digest):
         """Namecoin poe/ publishing implementation"""

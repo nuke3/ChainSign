@@ -42,11 +42,13 @@ class VerifyThread(WorkerThread):
     def process(self, f: FileEntry):
         with open(f.path, 'rb') as fd:
             resp = self.timestamper.verify_file(fd)
-            if resp and 'timestamp' in resp:
-                return 'Found at: %r' % (resp['timestamp'],)
-                self.verifyUpdate.emit(f.path, resp)
-            else:
-                return 'Not found'
+            if not resp:
+                status = "Not found"
+            elif not resp['pending']:
+                status = "{} {}".format(resp['txid'], resp['timestamp'])
+            elif resp['pending']:
+                status = "Pending {} {}".format(resp['txid'], resp['timestamp'])
+            self.verifyUpdate.emit(f.path, status)
 
 
 class TimestampThread(WorkerThread):
