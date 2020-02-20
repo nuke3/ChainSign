@@ -73,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         self.list_model = FileListModel(self)
         self.fileList.setModel(self.list_model)
+        self.fileList.resizeColumnsToContents()
 
         if not rpcurl_from_config('namecoin'):
             QtWidgets.QMessageBox.critical(
@@ -112,17 +113,21 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.statusBar().showMessage("Worker finished: %s" % (status,))
 
     def on_worker_failed(self, fname, status):
+        self.list_model.set_status(fname, status)
+        self.fileList.resizeColumnsToContents()
         self.statusBar().showMessage("Worker failed: %s: %s" % (fname, status,))
 
     def on_timestamp_update(self, fname, reg_txid, nonce, digest):
         self.list_model.set_registered(fname, reg_txid, nonce, digest)
+        self.fileList.resizeColumnsToContents()
 
     def on_publish_update(self, fname, txid):
         self.list_model.set_published(fname, txid)
+        self.fileList.resizeColumnsToContents()
 
     def on_verify_update(self, fname, status):
         self.list_model.set_status(fname, status)
-        pass
+        self.fileList.resizeColumnsToContents()
 
     # Button slots
     #
