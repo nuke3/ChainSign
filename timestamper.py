@@ -88,7 +88,7 @@ def main():
     ts = NamecoinTimestamper(rpcurl_from_config('namecoin', 'http://127.0.0.1:8336/'))
 
     for f in sys.argv[1:]:
-        with open(f) as fd:
+        with open(f, 'rb') as fd:
             timestamp = ts.verify_file(fd)
 
             if timestamp:
