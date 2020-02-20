@@ -63,3 +63,11 @@ def rpcurl_from_config(coin, default=None, config_path=None):
     except Exception as exc:  # pylint: disable=broad-except
         logger.exception(exc)
         return default
+
+
+def walk(directory):
+    """Generator yielding provided directory files recursively"""
+
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for f in filenames:
+            yield os.path.join(dirpath, f)

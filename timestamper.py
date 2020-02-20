@@ -15,7 +15,11 @@ class Timestamper(object):
         announced. Returns None if it has not been found."""
         raise NotImplementedError
 
-    def publish(self, digest):
+    def register(self, digest):
+        """Registers POE of POE :^)"""
+        raise NotImplementedError
+
+    def publish(self, name, reg_txid, nonce):
         """Publishes digest onto selected blockchain and returns transaction
         hash/id (which should match with one reported by verify call)"""
         raise NotImplementedError
@@ -35,10 +39,11 @@ class Timestamper(object):
 
         return self.verify(self.hash_file(fd))
 
-    def publish_file(self, fd):
+    def register_file(self, fd):
         """Publishes file from open fd using sha256."""
-
-        return self.publish(self.hash_file(fd))
+        digest = self.hash_file(fd)
+        reg_txid, nonce = self.register(digest)
+        return reg_txid, nonce, digest
 
 
 class NamecoinTimestamper(Timestamper):
@@ -71,16 +76,19 @@ class NamecoinTimestamper(Timestamper):
             'timestamp': datetime.utcfromtimestamp(tx['time']),
             }
 
-    def publish(self, digest):
+    def register(self, digest):
         """Namecoin poe/ publishing implementation"""
 
         name = self.IDENTITY.format(digest)
         reg_txid, nonce = self.client.name_new(name)
 
-        txid = self.client.name_firstupdate(name, nonce, reg_txid, json.dumps({
-            'ver': 0,
-            }))
+        return reg_txid, nonce
 
+    def publish(self, name, nonce, new_txid):
+        data = json.dumps({
+            'ver': 0,
+            })
+        txid = self.client.name_firstupdate(name, nonce, new_txid, data)
         return txid
 
 
