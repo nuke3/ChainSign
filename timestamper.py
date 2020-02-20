@@ -13,12 +13,12 @@ class Timestamper(object):
         """Checks if digest (hash) is present in selected blockchain and returns
         its timestamp and (unique) transaction hash/id in which it has been
         announced. Returns None if it has not been found."""
-        raise NotImplemented
+        raise NotImplementedError
 
     def publish(self, digest):
         """Publishes digest onto selected blockchain and returns transaction
         hash/id (which should match with one reported by verify call)"""
-        raise NotImplemented
+        raise NotImplementedError
 
     def hash_file(self, fd):
         """Returns sha256 hash of provided open fd."""
@@ -82,6 +82,7 @@ class NamecoinTimestamper(Timestamper):
             }))
 
         return txid
+
 
 def main():
     ts = NamecoinTimestamper(rpcurl_from_config('namecoin', 'http://127.0.0.1:8336/'))

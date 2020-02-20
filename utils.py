@@ -1,14 +1,18 @@
+from logging import getLogger
 import platform
 import os
+
+
+logger = getLogger(__file__)
 
 
 def parse_bitcoin_conf(fd):
     """Returns dict from bitcoin.conf-like configuration file from open fd"""
     conf = {}
-    for l in fd:
-        l = l.strip()
-        if not l.startswith('#') and '=' in l:
-            key, value = l.split('=', 1)
+    for line in fd:
+        line = line.strip()
+        if not line.startswith('#') and '=' in line:
+            key, value = line.split('=', 1)
             conf[key] = value
 
     return conf
@@ -19,8 +23,8 @@ def coin_config_path(coin):
 
     paths = {
         # FIXME use proper AppData path
-        'Windows': '~\AppData\Roaming\{0}\{0}.conf',
-        'Darwin': '~/Library/Application Support/{0}/{0}.conf',
+        'Windows': r'~\AppData\Roaming\{0}\{0}.conf',
+        'Darwin': r'~/Library/Application Support/{0}/{0}.conf',
 
         # Fallback path (Linux, FreeBSD...)
         None: '~/.{0}/{0}.conf',
@@ -56,5 +60,6 @@ def rpcurl_from_config(coin, default=None, config_path=None):
 
             return 'http://{0}@127.0.0.1:{1}/' \
                 .format(credentials, conf.get('rpcport', 8336))
-    except:
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.exception(exc)
         return default

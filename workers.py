@@ -32,7 +32,7 @@ class WorkerThread(QtCore.QThread):
             self.logger.exception('Run failed')
             self.workFailed.emit(str(exc))
 
-    def process(self):
+    def process(self, f):
         time.sleep(1)
         return 'OK'
 
