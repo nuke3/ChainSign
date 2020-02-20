@@ -19,18 +19,14 @@ class WorkerThread(QtCore.QThread):
         self.timestamper = NamecoinTimestamper(url)
 
     def run(self):
-        try:
-            for n in self.files:
-                try:
-                    self.workUpdate.emit(n[0], self.process(n))
-                except Exception as exc:
-                    self.logger.exception('Process failed')
-                    self.workUpdate.emit(n[0], 'error: %s' % (exc,))
+        for n in self.files:
+            try:
+                self.workUpdate.emit(n[0], self.process(n))
+            except Exception as exc:
+                self.logger.exception('Process failed')
+                self.workUpdate.emit(n[0], 'error: %s' % (exc,))
 
-            self.workFinished.emit('OK')
-        except Exception as exc:
-            self.logger.exception('Run failed')
-            self.workFailed.emit(str(exc))
+        self.workFinished.emit('OK')
 
     def process(self, f):
         time.sleep(1)
