@@ -5,7 +5,7 @@
 #define MyAppVersion "0.1"
 #define MyAppPublisher "ChainSign"
 #define MyAppExeName "chainsign.exe"
-#define NamecoinExeName "Namecoin_v0.3.80_setup.exe"
+#define NamecoinExeName "namecoin-0.13.99-win64-setup-unsigned.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
