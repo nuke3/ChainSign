@@ -74,6 +74,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.list_model = FileListModel(self)
         self.fileList.setModel(self.list_model)
         self.fileList.resizeColumnsToContents()
+        delete_action = QtWidgets.QAction("Delete", self)
+        delete_action.triggered.connect(self.on_deleteAction)
+        self.fileList.addAction(delete_action)
 
         if not rpcurl_from_config('namecoin'):
             QtWidgets.QMessageBox.critical(
@@ -81,6 +84,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                 'No namecoind found',
                 'Please install and configure Namecoin-Qt first.')
             sys.exit(1)
+
+    def on_deleteAction(self, checked):
+        rows = sorted(
+            set(idx.row() for idx in self.fileList.selectedIndexes()),
+            reverse=True
+        )
+
+        for r in rows:
+            self.list_model.delete_row(r)
+        self.fileList.clearSelection()
 
     @QtCore.Slot()
     def on_addDirectoryButton_clicked(self):

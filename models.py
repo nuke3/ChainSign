@@ -43,6 +43,9 @@ class FileListModel(QtCore.QAbstractTableModel):
         file_database.add_file(fname, status)
         self.layoutChanged.emit()
 
+    def delete_row(self, row):
+        file_database.del_row(row)
+
     def set_status(self, fname, status):
         self.layoutAboutToBeChanged.emit()
         file_database.set_status(fname, status)
