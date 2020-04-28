@@ -2,10 +2,10 @@ UI_OBJS = gui/mainwindow.py gui/about.py
 RCC_FILES = assets/assets.py
 
 %.py: %.ui
-	pyside-uic --from-imports $< -o $@
+	pyside2-uic --from-imports $< -o $@
 
 %.py: %.qrc
-	pyside-rcc $< -o $@
+	pyside2-rcc $< -o $@
 	cp $@ gui/$(notdir $(basename $@))_rc.py # FIXME
 
 all: chainsign.py

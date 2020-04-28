@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ChainSign"
-#define MyAppVersion "0.1"
+#define MyAppVersion "0.2"
 #define MyAppPublisher "ChainSign"
 #define MyAppExeName "chainsign.exe"
-#define NamecoinExeName "Namecoin_v0.3.80_setup.exe"
+#define NamecoinExeName "namecoin-0.19.0.1-win64-setup-unsigned.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
