@@ -13,8 +13,8 @@ Currently installation is not-so-simple. In the future application will be
 deployed using pyinstaller or some other python freezing solution, with proper
 windows installer and such...
 
-    sudo apt install python-pip libqt4-dev make
-    pip install -r requirements.txt
+    sudo apt install python3-pip qtbase5-dev make
+    pip3 install -r requirements.txt
     make run
 
 For Windows
@@ -34,8 +34,6 @@ Do not forget to run namecoin NODE!
 
 Development
 -----------
-Currently GUI part is based on PySide (qt4). In (hopefuly near) future, when
-PySide2 becomes a (stable) thing, we'll just migrate it over.
-
-We try to target python3.
+Currently GUI part is based on PySide2 (qt5).
+We target python3.
 
