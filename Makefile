@@ -13,7 +13,7 @@ all: chainsign.py
 chainsign.py: $(UI_OBJS) $(RCC_FILES)
 
 run: chainsign.py
-	python chainsign.py
+	python3 chainsign.py
 
 clean:
 	-rm $(UI_OBJS) $(RCC_FILES) gui/assets_rc.py
