@@ -35,11 +35,11 @@ Do not forget to run namecoin NODE!
 Remember to create namecoin.conf or copy from this repo
 The location of namecoin.conf depends on your operating system:
 
-Windows XP             
+Windows XP
 C:\Documents and Settings\<username>\Application Data\Namecoin\namecoin.conf
-Windows Vista, 7, 10   
+Windows Vista, 7, 10 
 C:\Users\<username>\AppData\Roaming\Bitcoin\namecoin.conf                                      
-Linux                  
+Linux 
 /home/<username>/.namecoin/namecoin.conf                                                           
 Mac OSX    
 /Users/<username>/Library/Application Support/Namecoin/namecoin.conf
