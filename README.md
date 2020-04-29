@@ -9,6 +9,7 @@ multiple chains is going to be released. (currently mostly contained in
 
 Installation
 ------------
+Linux:
 Currently installation is not-so-simple. In the future application will be
 deployed using pyinstaller or some other python freezing solution, with proper
 windows installer and such...
@@ -31,9 +32,15 @@ Example bulk verification CLI is available in `timestamper.py` when run
 directly (`python timestamper.py FILE1 FILE2 ...`)
 
 Do not forget to run namecoin NODE!
+Remember to create namecoin.conf or copy from this repo
+The location of namecoin.conf depends on your operating system:
+
+Windows XP             C:\Documents and Settings\<username>\Application Data\Namecoin\namecoin.conf
+Windows Vista, 7, 10   C:\Users\<username>\AppData\Roaming\Bitcoin\namecoin.conf                                      
+Linux                  /home/<username>/.namecoin/namecoin.conf                                                           
+Mac OSX                /Users/<username>/Library/Application Support/Namecoin/namecoin.conf
 
 Development
 -----------
 Currently GUI part is based on PySide2 (qt5).
 We target python3.
-
