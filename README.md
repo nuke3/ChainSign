@@ -36,7 +36,7 @@ Remember to create namecoin.conf or copy from this repo
 The location of namecoin.conf depends on your operating system:
 
 Windows XP
-C:\Documents and Settings\<username>\Application Data\Namecoin\namecoin.conf  .
+C:\Documents and Settings\<username>\Application Data\Namecoin\namecoin.conf     .  
 Windows Vista, 7, 10 ..
 C:\Users\<username>\AppData\Roaming\Bitcoin\namecoin.conf                                      
 Linux 
@@ -46,5 +46,5 @@ Mac OSX
 
 Development
 -----------
-Currently GUI part is based on PySide2 (qt5)..
+Currently GUI part is based on PySide2 (qt5)..  
 We target python3.
